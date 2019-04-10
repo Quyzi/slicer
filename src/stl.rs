@@ -111,16 +111,28 @@ impl Mesh {
 
     }
 
-    pub fn slice(&mut self, point: R32) -> Slice {
+    pub fn slice_at(&mut self, point: R32) -> Slice {
         let mut slice: Slice = Slice {
             lines: Vec::new(),
             height: point,
         };
 
         // Find relevant triangles
-        let mut triangles: Vec<Triangle> = Vec::new();
+        let mut triangles: Vec<&Triangle> = Vec::new();
         for triangle in &self.triangles {
-            
+            if triangle.vertices[0].z >= point || triangle.vertices[1].z >= point || triangle.vertices[2].z >= point {
+                // At least one Z is above slice point. 
+                if triangle.vertices[0].z <= point || triangle.vertices[1].z <= point || triangle.vertices[2].z <= point {
+                    // At least one Z is <= slice point.
+                    triangles.push(triangle);
+                }
+            }
+        }
+        for triangle in triangles {
+            match triangle.intersects_z(point) {
+                Some(l) => slice.lines.push(l),
+                None => (),
+            }
         }
         slice
     }
@@ -144,13 +156,13 @@ impl Mesh {
             }
         }
         
-        println!("Mins: {}, {}, {}", minx, miny, minz);
+        // println!("Mins: {}, {}, {}", minx, miny, minz);
 
         if minx < 0.0|| miny < 0.0 || minz < 0.0 {
             let x_offset: R32 = minx.abs() + x;
             let y_offset: R32 = miny.abs() + y;
             let z_offset: R32 = minz.abs() + z;
-            println!("Offset: {}, {}, {}", x_offset, y_offset, z_offset);
+            // println!("Offset: {}, {}, {}", x_offset, y_offset, z_offset);
             for t in &mut self.triangles {
                 for v in 0..3 {
                     t.vertices[v].x = t.vertices[v].x.mul_add(1.0.into(), x_offset);
@@ -221,10 +233,6 @@ impl Mesh {
             Ok(abc) => t.attr_byte_count = abc,
             Err(e) => return Err(Error::new(ErrorKind::Other, format!("Couldn't read attribute byte count for triangle: {}", e))),
         }
-
-        // t.lines = [ Line::from((t.vertices[0], t.vertices[1])),
-        //     Line::from((t.vertices[1], t.vertices[2])),
-        //     Line::from((t.vertices[2], t.vertices[0]))];
 
         Ok(t)
     }
