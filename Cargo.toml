@@ -1,0 +1,9 @@
+[package]
+name = "slicer"
+version = "0.1.0"
+authors = ["Chris Ober <oberc86@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+byteorder = "*"
+decorum = "*"
