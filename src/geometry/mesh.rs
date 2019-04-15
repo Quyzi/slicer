@@ -19,6 +19,15 @@ impl From<Vec<geometry::Triangle>> for Mesh {
     }
 }
 
+impl From<crate::models::STLFile> for Mesh {
+    fn from(input: crate::models::STLFile) -> Self {
+        Mesh {
+            triangles: input.triangles,
+            triangle_count: input.triangle_count as u32,
+        }
+    }
+}
+
 impl Default for Mesh {
     fn default() -> Mesh {
         Mesh {
@@ -98,6 +107,7 @@ impl Mesh {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn sort_by_z(&mut self) {
         for triangle in &mut self.triangles {
             triangle.vertices.sort_by(|a, b| b.z.cmp(&a.z));

@@ -1,5 +1,3 @@
-use decorum::*;
-
 use super::vertex::*;
 
 #[derive(Debug, Clone, Copy)]

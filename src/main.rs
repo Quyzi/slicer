@@ -1,21 +1,19 @@
-use std::fs::File;
 use decorum::*;
 
 pub mod geometry;
+pub mod models;
 
-mod stl;
+use models::stl::*;
 use geometry::mesh::Mesh as Mesh;
 use geometry::slice::Slice as Slice;
-use stl::STLFile as STLFile;
 
 fn main() {
-    let mut file = match File::open("fixtures/3DBenchy_bin.stl") {
-        Ok(f) => f,
-        Err(e) => panic!("Couldn't read input file. {}", e),
-    };
-    let stl: STLFile = STLFile::new("fixtures/3DBenchy_bin.stl".to_string());
-    let mut mesh: Mesh = stl.mesh;
 
+    let stl: STLFile = match STLFile::new("fixtures/3DBenchy_bin.stl".to_string()) {
+        Ok(stl) => stl,
+        Err(e) => panic!("{}", e),
+    };
+    let mut mesh = Mesh::from(stl);
     mesh.normalize(1.0.into(), 1.0.into(), 0.0.into());
     
     let mut height: R32 = 0.2.into();
