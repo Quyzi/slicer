@@ -7,6 +7,8 @@
 To make a slicer to generate gcode for 3d printers. 
 
 ## TODO
+- [X] Generate mesh from model file
+- [X] Slice Mesh 
 - [ ] Optimizations. Code is criminally inefficient in many places. 
 - [ ] Determine interior areas of slices for infill
 - [ ] Mesh Transformations (rotate, align plane on Z axis)
