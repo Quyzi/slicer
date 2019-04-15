@@ -8,8 +8,8 @@
 - [ ] Determine interior areas of slices for infill
 - [ ] Actual gcode generation
 - [ ] Support for more file formats
--- [X] Binary STL
--- [ ] ASCII STL
--- [ ] Obj
--- [ ] STEP
--- [ ] 3mf
+- - [X] Binary STL
+- - [ ] ASCII STL
+- - [ ] Obj
+- - [ ] STEP
+- - [ ] 3mf
