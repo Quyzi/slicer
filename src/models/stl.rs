@@ -90,9 +90,10 @@ impl STLFile {
             }
         }
 
-        match self.triangle_count == self.triangles.len() as u32 {
-            true => Ok(()),
-            false => return Err(Error::new(ErrorKind::Other, "Triangle count does not match STL.")),
+        if self.triangle_count == self.triangles.len() as u32 {
+            Ok(())
+        } else {
+            Err(Error::new(ErrorKind::Other, "Triangle count does not match STL."))
         }
     }
 
@@ -124,6 +125,6 @@ impl STLFile {
     }
 
     pub(crate) fn read_ascii_stl<T: ReadBytesExt>(&mut self, _input: &mut T) -> Result<()> {
-        return Err(Error::new(ErrorKind::Other, "ASCII STL Files not yet implemented."));
+        Err(Error::new(ErrorKind::Other, "ASCII STL Files not yet implemented."))
     }
 }

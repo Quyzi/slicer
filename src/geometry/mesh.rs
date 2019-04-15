@@ -63,9 +63,8 @@ impl Mesh {
             }
         }
         for triangle in triangles {
-            match triangle.intersects_z(point) {
-                Some(l) => slice.lines.push(l),
-                None => (),
+            if let Some(line) = triangle.intersects_z(point) {
+                slice.lines.push(line);
             }
         }
         slice

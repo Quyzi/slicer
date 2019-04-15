@@ -41,16 +41,16 @@ impl Triangle {
                 let v1: Vertex = Vertex {
                     x: vertices[0].x + t1 * (vertices[2].x - vertices[0].x),
                     y: vertices[0].y + t1 * (vertices[2].y - vertices[0].y),
-                    z: z,
+                    z,
                 };
                 let v2: Vertex = Vertex {
                     x:  vertices[0].x + t2 * (vertices[1].x - vertices[0].x),
                     y: vertices[0].y + t1 * (vertices[1].y - vertices[0].y),
-                    z: z,
+                    z,
                 };
                 return Some(Line {
-                    v1: v1,
-                    v2: v2,
+                    v1,
+                    v2,
                 });
             } else if vertices[1].z <= z {
                 let t1 = (z - vertices[2].z) / (vertices[1].z - vertices[2].z);
@@ -59,19 +59,19 @@ impl Triangle {
                 let v1: Vertex = Vertex {
                     x: vertices[2].x + t1 * (vertices[1].x - vertices[2].x),
                     y: vertices[2].y + t1 * (vertices[1].y - vertices[2].y),
-                    z: z,
+                    z,
                 };
                 let v2: Vertex = Vertex {
                     x: vertices[2].x + t2 * (vertices[0].x - vertices[2].x),
                     y: vertices[2].y + t2 * (vertices[0].y - vertices[2].y),
-                    z: z,
+                    z,
                 };
                 return Some(Line {
-                    v1: v1,
-                    v2: v2,
+                    v1,
+                    v2,
                 });
             }
         }
-        return None;
+        None
     }
 }
