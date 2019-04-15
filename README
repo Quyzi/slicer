@@ -1,6 +1,6 @@
 #Slicer
 
-[![Build Status](https://travis-ci.org/Quyzi/slicer.svg?branch=master)](https://travis-ci.org/Quyzi/slicer)
+[![Build Status](https://travis-ci.com/Quyzi/slicer.svg?branch=master)](https://travis-ci.com/Quyzi/slicer)
 ![minimum rust 1.33](https://img.shields.io/badge/rust-1.33%2B-orange.svg)
 
 ```rust
