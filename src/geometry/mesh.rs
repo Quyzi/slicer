@@ -1,8 +1,10 @@
 use decorum::*;
+use rayon::prelude::*;
 
-use crate::geometry as geometry;
 use super::slice::*;
 use super::triangle::*;
+use super::line::*;
+use crate::geometry;
 
 #[derive(Debug, Clone)]
 pub struct Mesh {
@@ -45,28 +47,30 @@ impl Mesh {
         }
     }
 
-    pub fn slice_at(&mut self, point: R32) -> Slice {
-        let mut slice: Slice = Slice {
-            lines: Vec::new(),
-            height: point,
-        };
+    pub fn slice_at(&self, point: R32) -> Slice {
+        let mut slice: Slice = Slice::default();
 
         // Find relevant triangles
-        let mut triangles: Vec<&Triangle> = Vec::new();
+        let mut triangles: Vec<Triangle> = Vec::new();
         for triangle in &self.triangles {
             if triangle.vertices[0].z >= point || triangle.vertices[1].z >= point || triangle.vertices[2].z >= point {
                 // At least one Z is above slice point. 
                 if triangle.vertices[0].z <= point || triangle.vertices[1].z <= point || triangle.vertices[2].z <= point {
-                    // At least one Z is <= slice point.
-                    triangles.push(triangle);
+                // At least one Z is <= slice point.
+                    triangles.push(triangle.clone());
                 }
             }
         }
-        for triangle in triangles {
+
+        let lines: Vec<Option<Line>> = triangles.par_iter().map(|triangle| {
             if let Some(line) = triangle.intersects_z(point) {
-                slice.lines.push(line);
+                Some(line)
+            } else {
+                None
             }
-        }
+        }).collect();
+        slice.lines = lines.into_iter().flatten().collect();
+
         slice
     }
 
@@ -88,10 +92,10 @@ impl Mesh {
                 }
             }
         }
-        
+
         // println!("Mins: {}, {}, {}", minx, miny, minz);
 
-        if minx < 0.0|| miny < 0.0 || minz < 0.0 {
+        if minx < 0.0 || miny < 0.0 || minz < 0.0 {
             let x_offset: R32 = minx.abs() + x;
             let y_offset: R32 = miny.abs() + y;
             let z_offset: R32 = minz.abs() + z;
@@ -103,13 +107,6 @@ impl Mesh {
                     t.vertices[v].z = t.vertices[v].z.mul_add(1.0.into(), z_offset);
                 }
             }
-        }
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn sort_by_z(&mut self) {
-        for triangle in &mut self.triangles {
-            triangle.vertices.sort_by(|a, b| b.z.cmp(&a.z));
         }
     }
 }

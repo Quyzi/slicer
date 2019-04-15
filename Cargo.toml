@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 byteorder = "*"
 decorum = "*"
+rayon = "~1.0"

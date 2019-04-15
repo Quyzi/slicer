@@ -106,11 +106,11 @@ impl STLFile {
             Err(e) => return Err(Error::new(ErrorKind::Other, format!("Couldn't read normal: {}", e))),
         }
 
-        for v in 0..3 {
+        for _ in 0..3 {
             let mut tri: [f32; 3] = [0f32; 3];
             match input.read_f32_into::<LittleEndian>(&mut tri) {
                 Ok(_) => {
-                    t.vertices[v] = geometry::Vertex::from(tri);
+                    t.vertices.push(geometry::Vertex::from(tri));
                 },
                 Err(e) => return Err(Error::new(ErrorKind::Other, format!("Couldn't read triangle: {}", e))),
             }

@@ -6,7 +6,7 @@ use super::line::*;
 #[derive(Debug, Clone)]
 pub struct Triangle {
     pub normal: Vertex,
-    pub vertices: [Vertex; 3],
+    pub vertices: Vec<Vertex>, //[Vertex; 3],
     pub attr_byte_count: u16,
 }
 
@@ -14,7 +14,7 @@ impl Default for Triangle {
     fn default() -> Triangle {
         Triangle {
             normal: Vertex::default(),
-            vertices: [Vertex::default(); 3],
+            vertices: Vec::new(), //[Vertex::default(); 3],
             // lines: [Line::default(); 3],
             attr_byte_count: 0,
         }
