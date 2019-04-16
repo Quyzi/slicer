@@ -70,6 +70,7 @@ impl Mesh {
             }
         }).collect();
         slice.lines = lines.into_iter().flatten().collect();
+        slice.height = point;
 
         slice
     }
