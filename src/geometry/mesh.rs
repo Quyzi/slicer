@@ -4,50 +4,80 @@ use rayon::prelude::*;
 use super::slice::*;
 use super::triangle::*;
 use super::line::*;
+use super::vertex::*;
 use crate::geometry;
 
 #[derive(Debug, Clone)]
 pub struct Mesh {
     pub triangles: Vec<geometry::Triangle>,
     pub triangle_count: u32,
+    pub minimum: Vertex,
+    pub maximum: Vertex,
 }
 
 impl From<Vec<geometry::Triangle>> for Mesh {
     fn from(input: Vec<geometry::Triangle>) -> Self {
-        Mesh {
+        let mut m = Mesh {
             triangles: input.clone(),
             triangle_count: input.len() as u32,
-        }
+            minimum: Vertex::default(),
+            maximum: Vertex::default(),
+        };
+        m.find_extents();
+        m
     }
 }
 
 impl From<crate::models::STLFile> for Mesh {
     fn from(input: crate::models::STLFile) -> Self {
-        Mesh {
+        let mut m = Mesh {
             triangles: input.triangles,
             triangle_count: input.triangle_count as u32,
-        }
+            minimum: Vertex::default(),
+            maximum: Vertex::default(),
+        };
+        m.find_extents();
+        m
     }
 }
 
 impl Default for Mesh {
     fn default() -> Mesh {
-        Mesh {
+        let mut m = Mesh {
             triangles: Vec::new(),
             triangle_count: 0u32,
-        }
+            minimum: Vertex::default(),
+            maximum: Vertex::default(),
+        };
+        m.find_extents();
+        m
     }
 }
 
 impl Mesh {
     pub fn new() -> Mesh {
-        Mesh {
+        let mut m = Mesh {
             triangles: Vec::new(),
             triangle_count: 0u32,
-        }
+            minimum: Vertex::default(),
+            maximum: Vertex::default(),
+        };
+        m.find_extents();
+        m
     }
 
-    pub fn slice_at(&self, point: R32) -> Slice {
+    pub fn slice(&self, layer_height: R32) -> Vec<Slice> {
+        let mut height: R32 = 0.0.into();
+        let mut slices: Vec<Slice> = Vec::new();
+
+        while height <= self.maximum.z {
+            height = height.mul_add(1.0.into(), layer_height);
+            slices.push(self.slice_at( height ));
+        }
+        slices
+    }
+
+    pub(crate) fn slice_at(&self, point: R32) -> Slice {
         let mut slice: Slice = Slice::default();
 
         // Find relevant triangles
@@ -109,5 +139,34 @@ impl Mesh {
                 }
             }
         }
+    }
+
+    pub fn find_extents(&mut self) {
+        let mut xx: Vec<R32> = Vec::new();
+        let mut yy: Vec<R32> = Vec::new();
+        let mut zz: Vec<R32> = Vec::new();
+
+        for triangle in &self.triangles {
+            for v in &triangle.vertices {
+                xx.push(v.x);
+                yy.push(v.y);
+                zz.push(v.z);
+            }
+        }
+
+        xx.sort_by(|a, b| b.cmp(&a));
+        yy.sort_by(|a, b| b.cmp(&a));
+        zz.sort_by(|a, b| b.cmp(&a));
+
+        self.minimum = Vertex {
+            x: xx.pop().unwrap(),
+            y: yy.pop().unwrap(),
+            z: zz.pop().unwrap(),
+        };
+        self.maximum = Vertex {
+            x: xx[0],
+            y: yy[0],
+            z: zz[0],
+        };
     }
 }
