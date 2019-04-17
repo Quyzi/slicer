@@ -24,7 +24,6 @@ impl Default for Triangle {
 
 impl Triangle {
     pub fn intersects_z(&self, z: R32) -> Option<Line> {
-        // Logic from https://kandepet.com/3d-printing-slicing-3d-objects/
         // sort vertices by Z height
         let mut vertices: Vec<Vertex> = vec!(self.vertices[0], self.vertices[1], self.vertices[2]);
         vertices.sort_by(|a, b| b.z.cmp(&a.z));
